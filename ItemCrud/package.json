@@ -1,0 +1,14 @@
+{
+  "name": "itemcrud",
+  "version": "1.0.0",
+  "main": "app.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "lohar",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "aws-sdk": "^2.1690.0"
+  }
+}

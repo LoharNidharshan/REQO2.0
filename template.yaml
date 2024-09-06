@@ -6,9 +6,15 @@ Description: >
   Sample SAM Template for lambda-token-authorizer
   
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+# Globals:
+#   Function:
+#     Timeout: 3
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 10
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref MyTable
 
 Resources:
   MyProductsAPI:
@@ -21,19 +27,73 @@ Resources:
           MyLambdaTokenAuthorizer:
             FunctionArn: !GetAtt MyAuthFunction.Arn
 
-  MyProductFunction:
+  MyUsersFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./productapp
-      Handler: app.handler
-      Runtime: nodejs18.x
+      CodeUri: ./UserCrud
+      Handler: app.create
+      Runtime: nodejs20.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MyTable
       Events:
         GetRoot:
           Type: Api
           Properties:
             RestApiId: !Ref MyProductsAPI
-            Path: /products
-            Method: get
+            Path: /users
+            Method: post
+
+  MyCompanyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./CompanyCrud
+      Handler: app.create
+      Runtime: nodejs20.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MyTable
+      Events:
+        GetRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyProductsAPI
+            Path: /companies
+            Method: post
+
+  MyCategoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./CategoryCrud
+      Handler: app.create
+      Runtime: nodejs20.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MyTable
+      Events:
+        GetRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyProductsAPI
+            Path: /categories
+            Method: post
+
+  MyItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./ItemCrud
+      Handler: app.create
+      Runtime: nodejs20.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MyTable
+      Events:
+        GetRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyProductsAPI
+            Path: /items
+            Method: post
 
   MyAuthFunction:
     Type: AWS::Serverless::Function
@@ -41,3 +101,23 @@ Resources:
       CodeUri: ./authorizer
       Handler: authorizer.handler
       Runtime: nodejs18.x
+
+  MyTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: reqoTable
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S  # S for String, N for Number, B for Binary
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH  # Partition key
+        - AttributeName: SK
+          KeyType: RANGE # Sort key
+      BillingMode: PAY_PER_REQUEST
+      # Optionally, you can define ProvisionedThroughput if you're not using PAY_PER_REQUEST
+      # ProvisionedThroughput:
+      #   ReadCapacityUnits: 5
+      #   WriteCapacityUnits: 5
