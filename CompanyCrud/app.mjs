@@ -45,7 +45,7 @@ export async function inserting(body){
         })
         .promise()
 
-    return { statusCode: 200, body: JSON.stringify(`company created successfully`) }
+    return { statusCode: 200, body: JSON.stringify(`company has been created successfully!!!!!!`) }
 }
 
 export async function deletion(body){
