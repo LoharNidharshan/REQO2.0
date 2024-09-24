@@ -1,40 +1,22 @@
 import AWS from "aws-sdk"
 const db = new AWS.DynamoDB.DocumentClient()
 const TableName = process.env.TABLE_NAME
+// const TableName = 'testTable'
 
 export const create = async event => {
 
     const empData = JSON.parse(event.body);
-    console.log("the emp data is: " + empData.name);
+    // console.log("the emp data is: " + empData.name);
 
-    if (empData.wannaDelete) {
-        const params = {
-            TableName: TableName,
-            Key: {
-                PK: "COMPANY", // Partition key
-                SK: empData.companyId            // Sort key
-            }
-        };
-        const result = await db
-            .delete(params)
-            .promise()
-        return { statusCode: 200, body: JSON.stringify("Deleted successfully") }
-    }
-    if (empData.wannaGet) {
+    if(empData.wannaDelete) return deletion(event.body);
 
-        const params = {
-            TableName: TableName,
-            KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
-            ExpressionAttributeValues: {
-                ':pk': "COMPANY",
-                ':sk': empData.companyId
-            }
-        };
-        const data = await db
-            .query(params)
-            .promise()
-        return { statusCode: 200, body: JSON.stringify(data) }
-    }
+    else if(empData.wannaGet) return fetching(event.body);
+
+    else return inserting(event.body);
+}
+
+export async function inserting(body){
+    const empData = JSON.parse(body);
 
     const newCompany = {
         PK: "COMPANY",
@@ -64,4 +46,40 @@ export const create = async event => {
         .promise()
 
     return { statusCode: 200, body: JSON.stringify(`company created successfully`) }
+}
+
+export async function deletion(body){
+    const empData = JSON.parse(body);
+    if (empData.wannaDelete) {
+        const params = {
+            TableName: TableName,
+            Key: {
+                PK: "COMPANY", // Partition key
+                SK: empData.companyId            // Sort key
+            }
+        };
+        const result = await db
+            .delete(params)
+            .promise()
+        return { statusCode: 200, body: JSON.stringify("Deleted successfully") }
+    }
+}
+
+export async function fetching(body){
+    const empData = JSON.parse(body);
+    if (empData.wannaGet) {
+
+        const params = {
+            TableName: TableName,
+            KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
+            ExpressionAttributeValues: {
+                ':pk': "COMPANY",
+                ':sk': empData.companyId
+            }
+        };
+        const data = await db
+            .query(params)
+            .promise()
+        return { statusCode: 200, body: JSON.stringify(data) }
+    }
 }
