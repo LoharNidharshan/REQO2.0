@@ -35,20 +35,24 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1 # Specify the AWS region you want to deploy to
 
-    # Step 5: Install dependencies (for Node.js-based SAM applications)
+    # Step 5: Install dependencies
     - name: Install dependencies
       run: npm install
+      working-directory: ./CompanyCrud # Adjust this path according to your project structure
 
     # Step 6: Build the SAM application
     - name: Build SAM application
       run: sam build
+      working-directory: ./ # Adjust if necessary
 
     # Step 7: Package the SAM application
     - name: Package SAM application
       run: |
-        sam package --output-template-file packaged.yaml --s3-bucket gactions
+        sam package --output-template-file packaged.yaml --s3-bucket YOUR_S3_BUCKET_NAME
+      working-directory: ./ # Adjust if necessary
 
     # Step 8: Deploy the SAM application
     - name: Deploy SAM application
       run: |
-        sam deploy --template-file packaged.yaml --stack-name LAuth --capabilities CAPABILITY_IAM
+        sam deploy --template-file packaged.yaml --stack-name YOUR_STACK_NAME --capabilities CAPABILITY_IAM
+      working-directory: ./ # Adjust if necessary
