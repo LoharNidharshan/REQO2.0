@@ -12,7 +12,7 @@ export const create = async event => {
             TableName: TableName,
             Key: {
                 PK: itemData.companyId,
-                SK: "ITEMS#" + itemData.creatorMailId + "#" + itemData.categoryName,
+                SK: "CATEGORY#"+itemData.categoryName,
             }
         };
         const result = await db
@@ -27,7 +27,7 @@ export const create = async event => {
             KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
             ExpressionAttributeValues: {
                 ':pk': itemData.companyId,
-                ':sk': "ITEMS#" + itemData.creatorMailId + "#" + itemData.categoryName,
+                ':sk': "CATEGORY#"+itemData.categoryName,
             }
         };
         const data = await db
@@ -38,26 +38,26 @@ export const create = async event => {
 
     const newItem = {
         PK: itemData.companyId,
-        SK: "ITEMS#" + itemData.creatorMailId + "#" + itemData.categoryName,
-        creatorMailId: itemData.creatorMailId,
-        ticketNo: itemData.ticketNo,
-        assetId: itemData.assetId,
-        categoryName: itemData.categoryName,
-        categoryAdmin: itemData.categoryAdmin,
-        comments: itemData.comments,
-        companyId: itemData.companyId,
-        description: itemData.description,
-        history: itemData.history,
-        imageKey: itemData.imageKey,
-        isDeleted: itemData.isDeleted,
-        request: itemData.request,
-        requestToAll: itemData.requestToAll,
-        requestCreatedTime: itemData.requestCreatedTime,
-        requester: itemData.requester,
-        requestTitle: itemData.requestTitle,
-        requestTo: itemData.requestTo,
-        status: itemData.status,
-        track: itemData.track
+        SK: "ITEMS#"+itemData.creatorMailId+"#"+itemData.categoryName,
+        creatorMailId:itemData.creatorMailId,
+        ticketNo:itemData.ticketNo,
+        assetId:itemData.assetId,
+        categoryName:itemData.categoryName,
+        categoryAdmin:itemData.categoryAdmin,
+        comments:itemData.comments,
+        companyId:itemData.companyId,
+        description:itemData.description,
+        history:itemData.history,
+        imageKey:itemData.imageKey,
+        isDeleted:itemData.isDeleted,
+        request:itemData.request,
+        requestToAll:itemData.requestToAll,
+        requestCreatedTime:itemData.requestCreatedTime,
+        requester:itemData.requester,
+        requestTitle:itemData.requestTitle,
+        requestTo:itemData.requestTo,
+        status:itemData.status,
+        track:itemData.track
 
     }
     await db

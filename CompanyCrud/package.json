@@ -3,12 +3,20 @@
   "version": "1.0.0",
   "main": "app.mjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "aws-sdk": "^2.1688.0"
+    "aws-sdk": "^2.1688.0",
+    "D": "^1.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.25.4",
+    "@types/aws-lambda": "^8.10.145",
+    "aws-sdk-mock": "^6.2.0",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0"
   }
 }
