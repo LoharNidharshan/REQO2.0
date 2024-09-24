@@ -14,11 +14,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Step 2: Set up Node.js (if your SAM project uses Node.js Lambda functions)
+    # Step 2: Set up Node.js (update to Node.js 20)
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20' # Change to the Node.js version you are using
+        node-version: '20' # Change to Node.js 20
 
     # Step 3: Install AWS CLI
     - name: Install AWS CLI
@@ -47,7 +47,7 @@ jobs:
     # Step 7: Package the SAM application
     - name: Package SAM application
       run: |
-        sam package --output-template-file packaged.yaml --s3-bucket gaction
+        sam package --output-template-file packaged.yaml --s3-bucket gactions
 
     # Step 8: Deploy the SAM application
     - name: Deploy SAM application
