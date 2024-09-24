@@ -14,19 +14,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Step 2: Set up Node.js (if your SAM project uses Node.js Lambda functions)
+    # Step 2: Set up Node.js (update to Node.js 20)
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20' # Change to the Node.js version you are using
+        node-version: '20' # Change to Node.js 20
 
-    # Step 3: Install AWS CLI
-    - name: Install AWS CLI
+    # Step 3: Install or update AWS CLI
+    - name: Install or update AWS CLI
       run: |
-        sudo apt-get install -y unzip
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
         unzip awscliv2.zip
-        sudo ./aws/install
+        sudo ./aws/install --update
 
     # Step 4: Configure AWS credentials
     - name: Configure AWS credentials
@@ -36,20 +35,24 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1 # Specify the AWS region you want to deploy to
 
-    # Step 5: Install dependencies (for Node.js-based SAM applications)
+    # Step 5: Install dependencies
     - name: Install dependencies
       run: npm install
+      working-directory: ./CompanyCrud # Adjust this path according to your project structure
 
     # Step 6: Build the SAM application
     - name: Build SAM application
       run: sam build
+      working-directory: ./ # Adjust if necessary
 
     # Step 7: Package the SAM application
     - name: Package SAM application
       run: |
-        sam package --output-template-file packaged.yaml --s3-bucket gaction
+        sam package --output-template-file packaged.yaml --s3-bucket gactions
+      working-directory: ./ # Adjust if necessary
 
     # Step 8: Deploy the SAM application
     - name: Deploy SAM application
       run: |
         sam deploy --template-file packaged.yaml --stack-name LAuth --capabilities CAPABILITY_IAM
+      working-directory: ./ # Adjust if necessary
