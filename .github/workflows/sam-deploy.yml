@@ -48,11 +48,11 @@ jobs:
     # Step 7: Package the SAM application
     - name: Package SAM application
       run: |
-        sam package --output-template-file packaged.yaml --s3-bucket YOUR_S3_BUCKET_NAME
+        sam package --output-template-file packaged.yaml --s3-bucket gactions
       working-directory: ./ # Adjust if necessary
 
     # Step 8: Deploy the SAM application
     - name: Deploy SAM application
       run: |
-        sam deploy --template-file packaged.yaml --stack-name YOUR_STACK_NAME --capabilities CAPABILITY_IAM
+        sam deploy --template-file packaged.yaml --stack-name LAuth --capabilities CAPABILITY_IAM
       working-directory: ./ # Adjust if necessary
