@@ -1,74 +1,72 @@
-# lambda-token-authorizer
+# Overview
+This project defines multiple Lambda functions for handling CRUD operations related to users, companies, categories, and items. It also includes an AWS Lambda token authorizer for securing API endpoints using a custom token-based authorization mechanism.
 
-This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
+The project uses AWS SAM to define resources such as Lambda functions, API Gateway, and DynamoDB tables.
 
-- authorizer/authorizer.mjs - Code for the application's Lambda authorizer function.
-- productapp/app.mjs - The main business logic should be in this file, for the moment it's just a hello world output
-- template.yaml - A template that defines the application's AWS resources.
+# Prerequisites
+To deploy and run this project, you'll need the following:
 
-The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
+AWS CLI installed and configured
+AWS SAM CLI installed
+Node.js (version 18.x or 20.x) installed
+An AWS account with necessary permissions to deploy serverless resources (Lambda, API Gateway, DynamoDB)
+# Architecture
+## Lambda Functions: 
+The core logic for CRUD operations related to Users, Companies, Categories, and Items.
+## DynamoDB: 
+Stores the data for users, companies, categories, and items.
+## API Gateway: 
+Provides RESTful API endpoints for interacting with the system.
+## Lambda Token Authorizer: 
+Used for securing the API endpoints with custom token-based authorization.
+# AWS Resources
+The following resources are created:
 
-## Deploy the sample application
+API Gateway: Acts as an entry point for the client requests.
+Lambda Functions: Each resource (Users, Companies, Categories, and Items) has its own Lambda function.
+DynamoDB Table: A single table reqoTable that holds the data for all resources, using PK (Partition Key) and SK (Sort Key) to structure the data.
+Lambda Token Authorizer: A custom Lambda function that authorizes requests to API Gateway endpoints.
+Lambda Functions
+Each Lambda function handles CRUD operations for a specific resource:
 
-The Serverless Application Model Command Line Interface (SAM CLI) is an extension of the AWS CLI that adds functionality for building and testing Lambda applications. It uses Docker to run your functions in an Amazon Linux environment that matches Lambda. It can also emulate your application's build environment and API.
+User Function: ./UserCrud/app.js
+Company Function: ./CompanyCrud/app.js
+Category Function: ./CategoryCrud/app.js
+Item Function: ./ItemCrud/app.js
 
-To use the SAM CLI, you need the following tools.
+# DynamoDB Table Structure
+The DynamoDB table uses composite keys with a Partition Key (PK) and a Sort Key (SK) to organize the data.
 
-* SAM CLI - [Install the SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-* Node.js - [Install Node.js 18](https://nodejs.org/en/), including the NPM package management tool.
-* Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community)
+PK: Primary partition key, generally represents the main entity (e.g., companyId, categoryId).
+SK: Sort key, used to store specific attributes related to the partition key (e.g., CATEGORY#categoryName).
+## Example Data Structure
+Users: PK = companyId, SK = USERS#emailId
+Companies: PK = COMPANY, SK = companyId
+Categories: PK = companyId, SK = CATEGORY#categoryName
+Items: PK = companyId, SK = ITEMS#creatorMailId#categoryName
+## Token Authorizer
+The Lambda token authorizer is responsible for authorizing API requests. It verifies the token included in the request headers and allows or denies access to the # # API Gateway endpoints.
 
-To build and deploy your application for the first time, run the following in your shell:
-
+## API Endpoints
+Users: /users (POST)
+Companies: /companies (POST)
+Categories: /categories (POST)
+Items: /items (POST)
+# Deployment
+## Step 1: Install Dependencies
+```bash
+npm install
+```
+## Step 2: Build the Project
+```bash
+npm run build
+```
+## Step 3: Deploy the Project
 ```bash
 sam build
 sam deploy --guided
 ```
+Follow the on-screen instructions to complete the deployment.
 
-The first command will build the source of your application. The second command will package and deploy your application to AWS, with a series of prompts:
-
-* **Stack Name**: The name of the stack to deploy to CloudFormation. This should be unique to your account and region, and a good starting point would be something matching your project name.
-* **AWS Region**: The AWS region you want to deploy your app to.
-* **Confirm changes before deploy**: If set to yes, any change sets will be shown to you before execution for manual review. If set to no, the AWS SAM CLI will automatically deploy application changes.
-* **Allow SAM CLI IAM role creation**: Many AWS SAM templates, including this example, create AWS IAM roles required for the AWS Lambda function(s) included to access AWS services. By default, these are scoped down to minimum required permissions. To deploy an AWS CloudFormation stack which creates or modifies IAM roles, the `CAPABILITY_IAM` value for `capabilities` must be provided. If permission isn't provided through this prompt, to deploy this example you must explicitly pass `--capabilities CAPABILITY_IAM` to the `sam deploy` command.
-* **Save arguments to samconfig.toml**: If set to yes, your choices will be saved to a configuration file inside the project, so that in the future you can just re-run `sam deploy` without parameters to deploy changes to your application.
-
-
-## Use the SAM CLI to build and test locally
-
-Build your application with the `sam build` command.
-
-```bash
-lambda-token-authorizer$ sam build
-```
-
-The SAM CLI installs dependencies defined in `hello-world/package.json`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
-
-Test a single function by invoking it directly with a test event. An event is a JSON document that represents the input that the function receives from the event source. Test events are included in the `events` folder in this project.
-
-Run functions locally and invoke them with the `sam local invoke` command.
-
-```bash
-lambda-token-authorizer$ sam local invoke MyProductFunction
-```
-
-The SAM CLI can also emulate your application's API. Use the `sam local start-api` to run the API locally on port 3000.
-
-```bash
-lambda-token-authorizer$ sam local start-api
-lambda-token-authorizer$ curl http://localhost:3000/
-```
-
-## Cleanup
-
-To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
-
-```bash
-sam delete --stack-name lambda-token-authorizer
-```
-
-## Resources
-
-See the [AWS SAM developer guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) for an introduction to SAM specification, the SAM CLI, and serverless application concepts.
-
-Next, you can use AWS Serverless Application Repository to deploy ready to use Apps that go beyond hello world samples and learn how authors developed their applications: [AWS Serverless Application Repository main page](https://aws.amazon.com/serverless/serverlessrepo/)
+Usage
+Once deployed, you can interact with the API using tools like Postman or curl. Make sure to include the correct authorization token in the request headers for secured endpoints.
